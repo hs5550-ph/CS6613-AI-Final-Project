@@ -34,7 +34,7 @@ O = "O"
 
 ## Game operations
 
-- `actions(state)` returns all avilable moves left. Each move is represented by a tuple of two integers in the format of (row, column).
+- `actions(state)` returns all avilable moves left. Each move is represented by a tuple of two integers in the format of `(row, column)`.
 - `generate_random_move(state)` returns a random available move. It raises
   `ValueError` if there are no available moves.
 - `insert_piece(state, row, column, piece)` places `X` or `O` at a zero-based
