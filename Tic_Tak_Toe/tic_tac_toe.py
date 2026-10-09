@@ -7,6 +7,7 @@ CONNECTING_PIECES_TO_WIN = 3
 EMPTY = " "
 X = "X"
 O = "O"
+ALLOWED_PLAYERS = (X, O)
 CELL_SEPARATOR = " | "
 ROW_SEPARATOR = "+"
 
@@ -61,7 +62,7 @@ class TicTacToe:
     ) -> None:
         if not 0 <= row < state.rows or not 0 <= column < state.columns:
             raise IndexError("Board position is out of range")
-        if piece not in (X, O):
+        if piece not in ALLOWED_PLAYERS:
             raise ValueError("Piece must be X or O")
         if state.board[row][column] != EMPTY:
             raise ValueError("Board position is already occupied")
@@ -100,12 +101,12 @@ class TicTacToe:
         return False
 
     def is_win(self, state: GameState, player: str) -> bool:
-        if player not in (X, O):
+        if player not in ALLOWED_PLAYERS:
             raise ValueError("Player must be X or O")
         return self._is_win_for_piece(state, player)
 
     def utility(self, state: GameState, current_player: str) -> float:
-        if current_player not in (X, O):
+        if current_player not in ALLOWED_PLAYERS:
             raise ValueError("Player must be X or O")
         if self.utility_function is not None:
             return self.utility_function(state, current_player)
