@@ -8,15 +8,18 @@ algorithms.
 `TicTacToe` contains the general game rules. `GameState` contains the board and represents one particular game. 
 
 ```python
-from Tic_Tak_Toe.tic_tac_toe import *
+from Tic_Tak_Toe.tic_tac_toe import GameState, TicTacToe, X, O
 
 game = TicTacToe()
-state = game.initial_state()
+state1 = GameState()
+state2 = GameState()
 
-game.insert_piece(state, 0, 0, X)
-game.insert_piece(state, 1, 1, O)
-print(game.actions(state))
-game.display_board(state)
+game.insert_piece(state1, 0, 0, X)
+game.insert_piece(state2, 2, 2, O)
+
+print(game.actions(state1))
+game.display_board(state1)
+game.display_board(state2)
 ```
 
 ## Module constants

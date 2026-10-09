@@ -10,8 +10,8 @@ def game():
 
 
 @pytest.fixture
-def state(game):
-    return game.initial_state()
+def state():
+    return GameState()
 
 
 def test_insert_piece_places_x_and_o(game, state):
@@ -23,12 +23,17 @@ def test_insert_piece_places_x_and_o(game, state):
 
 
 def test_game_states_have_independent_boards(game):
-    first_state = game.initial_state()
-    second_state = game.initial_state()
+    first_state = GameState()
+    second_state = GameState()
     game.insert_piece(first_state, 0, 0, tic_tac_toe.X)
+    game.insert_piece(second_state, 2, 2, tic_tac_toe.O)
 
     assert first_state.board[0][0] == tic_tac_toe.X
+    assert first_state.board[2][2] == tic_tac_toe.EMPTY
     assert second_state.board[0][0] == tic_tac_toe.EMPTY
+    assert second_state.board[2][2] == tic_tac_toe.O
+    assert (0, 0) not in game.actions(first_state)
+    assert (0, 0) in game.actions(second_state)
 
 
 def test_actions_returns_all_empty_board_positions(game, state):
@@ -113,8 +118,8 @@ def test_is_win_returns_false_without_a_connected_run(game, state):
 
 
 def test_board_dimensions_and_win_length_are_configurable():
-    game = TicTacToe(rows=5, columns=6, connecting_pieces_to_win=4)
-    state = game.initial_state()
+    game = TicTacToe(connecting_pieces_to_win=4)
+    state = GameState(rows=5, columns=6)
 
     assert len(state.board) == 5
     assert all(len(row) == 6 for row in state.board)
@@ -123,7 +128,7 @@ def test_board_dimensions_and_win_length_are_configurable():
         game.insert_piece(state, 2, column, tic_tac_toe.X)
     assert game.is_win(state)
 
-    state = game.initial_state()
+    state = GameState(rows=5, columns=6)
     for row in range(game.connecting_pieces_to_win):
         game.insert_piece(state, row, 3, tic_tac_toe.O)
     assert game.is_win(state)
@@ -134,9 +139,9 @@ def test_state_constructor_rejects_non_positive_board_dimensions():
         GameState(rows=0)
 
 
-def test_game_constructor_rejects_non_positive_dimensions():
+def test_game_constructor_rejects_non_positive_win_length():
     with pytest.raises(ValueError, match="must be positive"):
-        TicTacToe(rows=0)
+        TicTacToe(connecting_pieces_to_win=0)
 
 
 def test_is_terminal_returns_true_for_a_win(game, state):

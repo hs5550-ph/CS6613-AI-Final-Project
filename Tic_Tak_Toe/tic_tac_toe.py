@@ -27,19 +27,12 @@ class GameState:
 class TicTacToe:
     def __init__(
         self,
-        rows: int = NUMBER_OF_ROWS,
-        columns: int = NUMBER_OF_COLUMNS,
         connecting_pieces_to_win: int = CONNECTING_PIECES_TO_WIN,
     ) -> None:
-        if rows < 1 or columns < 1 or connecting_pieces_to_win < 1:
-            raise ValueError("Board dimensions and win length must be positive")
+        if connecting_pieces_to_win < 1:
+            raise ValueError("Win length must be positive")
 
-        self.rows = rows
-        self.columns = columns
         self.connecting_pieces_to_win = connecting_pieces_to_win
-
-    def initial_state(self) -> GameState:
-        return GameState(self.rows, self.columns)
 
     def actions(self, state: GameState) -> list[tuple[int, int]]:
         return [
@@ -115,4 +108,4 @@ class TicTacToe:
 
 if __name__ == "__main__":
     game = TicTacToe()
-    game.display_board(game.initial_state())
+    game.display_board(GameState())
