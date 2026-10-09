@@ -76,6 +76,29 @@ def test_is_win_returns_false_without_a_connected_run():
     assert not game.is_win()
 
 
+def test_board_dimensions_and_win_length_are_configurable(monkeypatch):
+    monkeypatch.setattr(game, "ROWS", 5)
+    monkeypatch.setattr(game, "COLUMNS", 6)
+    monkeypatch.setattr(game, "CONNECTING_PIECES_TO_WIN", 4)
+    game.board[:] = [
+        [game.EMPTY for _ in range(game.COLUMNS)] for _ in range(game.ROWS)
+    ]
+
+    assert len(game.board) == 5
+    assert all(len(row) == 6 for row in game.board)
+
+    for column in range(game.CONNECTING_PIECES_TO_WIN):
+        game.insert_piece(2, column, game.X)
+    assert game.is_win()
+
+    game.board[:] = [
+        [game.EMPTY for _ in range(game.COLUMNS)] for _ in range(game.ROWS)
+    ]
+    for row in range(game.CONNECTING_PIECES_TO_WIN):
+        game.insert_piece(row, 3, game.O)
+    assert game.is_win()
+
+
 def test_display_board_shows_grid_and_separators(capsys):
     game.insert_piece(0, 0, game.X)
     game.insert_piece(1, 1, game.O)

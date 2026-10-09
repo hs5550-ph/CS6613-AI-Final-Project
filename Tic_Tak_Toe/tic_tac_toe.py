@@ -4,6 +4,8 @@ CONNECTING_PIECES_TO_WIN = 3
 EMPTY = " "
 X = "X"
 O = "O"
+CELL_SEPARATOR = " | "
+ROW_SEPARATOR = "+"
 
 board = [[EMPTY for _ in range(COLUMNS)] for _ in range(ROWS)]
 
@@ -46,9 +48,9 @@ def is_win() -> bool:
 
 def display_board() -> None:
     for row_index, row in enumerate(board):
-        print(" | ".join(row))
+        print(CELL_SEPARATOR.join(row))
         if row_index < ROWS - 1:
-            print("+".join("---" for _ in range(COLUMNS)))
+            print(ROW_SEPARATOR.join("---" for _ in range(COLUMNS)))
 
 
 if __name__ == "__main__":
