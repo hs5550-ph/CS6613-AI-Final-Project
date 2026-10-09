@@ -22,6 +22,25 @@ def test_insert_piece_places_x_and_o():
     assert game.board[2][2] == game.O
 
 
+def test_generate_random_move_returns_an_empty_board_position():
+    game.insert_piece(0, 0, game.X)
+
+    row, column = game.generate_random_move()
+
+    assert 0 <= row < game.ROWS
+    assert 0 <= column < game.COLUMNS
+    assert game.board[row][column] == game.EMPTY
+
+
+def test_generate_random_move_rejects_full_board():
+    for row in range(game.ROWS):
+        for column in range(game.COLUMNS):
+            game.board[row][column] = game.X
+
+    with pytest.raises(ValueError, match="No available moves"):
+        game.generate_random_move()
+
+
 def test_insert_piece_rejects_out_of_range_position():
     with pytest.raises(IndexError):
         game.insert_piece(game.ROWS, 0, game.X)

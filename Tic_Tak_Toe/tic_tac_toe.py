@@ -1,3 +1,5 @@
+import random
+
 ROWS = 3
 COLUMNS = 3
 CONNECTING_PIECES_TO_WIN = 3
@@ -8,6 +10,19 @@ CELL_SEPARATOR = " | "
 ROW_SEPARATOR = "+"
 
 board = [[EMPTY for _ in range(COLUMNS)] for _ in range(ROWS)]
+
+
+def generate_random_move() -> tuple[int, int]:
+    available_moves = [
+        (row_index, column_index)
+        for row_index, row in enumerate(board)
+        for column_index, piece in enumerate(row)
+        if piece == EMPTY
+    ]
+    if not available_moves:
+        raise ValueError("No available moves")
+
+    return random.choice(available_moves)
 
 
 def insert_piece(row: int, column: int, piece: str) -> None:

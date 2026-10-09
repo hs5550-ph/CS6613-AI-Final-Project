@@ -4,6 +4,8 @@ A Python implementation of a generic two-dimensional Tic-Tac-Toe game stimulatio
 
 ## Functions in tic_tac_toe.py
 
+- `generate_random_move()` returns a random `(row, column)` position that is
+  empty on the current board. It raises `ValueError` if the board is full.
 - `insert_piece(row, column, piece)` places `"X"` or `"O"` at the zero-based
   position. It raises `IndexError` for an out-of-range position and
   `ValueError` for an invalid piece or an occupied position.
