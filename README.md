@@ -1,7 +1,6 @@
 # Generic Tic-Tac-Toe AI
 
-A configurable two-dimensional Tic-Tac-Toe game for experimentation with AI
-algorithms.
+A two-dimensional Tic-Tac-Toe game with different AI algorithms.
 
 ## Creating a game and state
 
@@ -46,3 +45,22 @@ O = "O"
 - `is_terminal(state)` returns `True` when the state has a win or no legal
   actions remaining.
 - `display_board(state)` prints the state's board.
+
+## Utility function for alpha-beta pruning
+
+Alpha-beta pruning needs a utility function that scores states from the current
+player's perspective. Provide a function that accepts a `GameState` and the
+current player's piece, then pass it to `TicTacToe`:
+
+```python
+def utility(state, current_player):
+    x_count = sum(row.count(X) for row in state.board)
+    o_count = sum(row.count(O) for row in state.board)
+    if current_player == X:
+        return x_count - o_count
+    return o_count - x_count
+
+
+game = TicTacToe(utility_function=utility)
+utility = game.utility_fuction(state, tic_tac_toe.X)
+```

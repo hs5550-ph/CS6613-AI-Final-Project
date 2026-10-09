@@ -1,4 +1,5 @@
 import random
+from collections.abc import Callable
 
 NUMBER_OF_ROWS = 3
 NUMBER_OF_COLUMNS = 3
@@ -28,11 +29,13 @@ class TicTacToe:
     def __init__(
         self,
         connecting_pieces_to_win: int = CONNECTING_PIECES_TO_WIN,
+        utility_function: Callable[[GameState, str], float] | None = None,
     ) -> None:
         if connecting_pieces_to_win < 1:
             raise ValueError("Win length must be positive")
 
         self.connecting_pieces_to_win = connecting_pieces_to_win
+        self.utility_function = utility_function
 
     def actions(self, state: GameState) -> list[tuple[int, int]]:
         return [
@@ -65,13 +68,13 @@ class TicTacToe:
 
         state.board[row][column] = piece
 
-    def is_win(self, state: GameState) -> bool:
+    def _is_win_for_piece(self, state: GameState, target_piece: str) -> bool:
         directions = ((0, 1), (1, 0), (1, 1), (1, -1))
 
         for row in range(state.rows):
             for column in range(state.columns):
                 piece = state.board[row][column]
-                if piece == EMPTY:
+                if piece != target_piece:
                     continue
 
                 for row_step, column_step in directions:
@@ -95,6 +98,18 @@ class TicTacToe:
                         return True
 
         return False
+
+    def is_win(self, state: GameState) -> bool:
+        return self._is_win_for_piece(state, X) or self._is_win_for_piece(state, O)
+
+    def utility(self, state: GameState, current_player: str) -> float:
+        if current_player not in (X, O):
+            raise ValueError("Player must be X or O")
+        if self.utility_function is not None:
+            return self.utility_function(state, current_player)
+        else:
+            raise NotImplementedError("Utility function is not implemented")
+        
 
     def is_terminal(self, state: GameState) -> bool:
         return self.is_win(state) or not self.actions(state)

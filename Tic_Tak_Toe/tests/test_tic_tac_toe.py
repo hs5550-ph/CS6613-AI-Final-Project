@@ -109,6 +109,52 @@ def test_is_win_detects_anti_diagonal_win(game, state):
     assert game.is_win(state)
 
 
+def test_utility_scores_wins_from_the_requested_player_perspective(game, state):
+    for column in range(game.connecting_pieces_to_win):
+        game.insert_piece(state, 1, column, tic_tac_toe.X)
+
+    def mock_utility(current_state, current_player):
+        winner = current_state.board[1][0]
+        return 1.0 if current_player == winner else -1.0
+
+    game_with_mock_utility = TicTacToe(utility_function=mock_utility)
+
+    assert game_with_mock_utility.utility(state, tic_tac_toe.X) == 1.0
+    assert game_with_mock_utility.utility(state, tic_tac_toe.O) == -1.0
+
+
+def test_utility_scores_a_draw_as_zero(state):
+    state.board[:] = [
+        [tic_tac_toe.X, tic_tac_toe.O, tic_tac_toe.X],
+        [tic_tac_toe.X, tic_tac_toe.O, tic_tac_toe.O],
+        [tic_tac_toe.O, tic_tac_toe.X, tic_tac_toe.X],
+    ]
+
+    game = TicTacToe(utility_function=lambda _state, _player: 0.0)
+
+    assert game.is_terminal(state)
+    assert game.utility(state, tic_tac_toe.X) == 0.0
+    assert game.utility(state, tic_tac_toe.O) == 0.0
+
+
+def test_custom_utility_function_is_used(state):
+    calls = []
+
+    def custom_utility(current_state, player):
+        calls.append((current_state, player))
+        return 3.5
+
+    game = TicTacToe(utility_function=custom_utility)
+
+    assert game.utility(state, tic_tac_toe.O) == 3.5
+    assert calls == [(state, tic_tac_toe.O)]
+
+
+def test_utility_rejects_an_invalid_player(game, state):
+    with pytest.raises(ValueError, match="Player must be X or O"):
+        game.utility(state, "?")
+
+
 def test_is_win_returns_false_without_a_connected_run(game, state):
     game.insert_piece(state, 0, 0, tic_tac_toe.X)
     game.insert_piece(state, 0, 1, tic_tac_toe.X)
