@@ -12,18 +12,9 @@ A Python implementation of a generic two-dimensional Tic-Tac-Toe game stimulatio
 - `display_board()` prints the current board.
 
 ## Constants in tic_tac_toe.py
+
+```python
 ROWS = 3
 COLUMNS = 3
 CONNECTING_PIECES_TO_WIN = 3
-
-## Tests
-
-Install pytest if needed, then run the suite from the parent directory:
-
-```bash
-python -m pip install pytest
-python -m pytest Tic_Tak_Toe/tests
 ```
-
-The tests cover piece insertion, invalid moves, wins in each direction,
-custom board dimensions, a four-piece win, and board display.
