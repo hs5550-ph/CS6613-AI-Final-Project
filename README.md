@@ -8,7 +8,7 @@ algorithms.
 `TicTacToe` contains the general game rules. `GameState` contains the board and represents one particular game. 
 
 ```python
-from Tic_Tak_Toe.tic_tac_toe import GameState, TicTacToe, X, O
+from Tic_Tak_Toe.tic_tac_toe import *
 
 game = TicTacToe()
 state1 = GameState()
@@ -35,8 +35,8 @@ O = "O"
 
 ## Game operations
 
-- `actions(state)` returns all avilable positions left in the format of `(row, column)`.
-- `generate_random_move(state)` returns a random available action. It raises
+- `actions(state)` returns all avilable moves left in the format of `(row, column)`.
+- `generate_random_move(state)` returns a random available move. It raises
   `ValueError` if there are no available moves.
 - `insert_piece(state, row, column, piece)` places `X` or `O` at a zero-based
   position in the state. It raises `IndexError` for an out-of-range position
