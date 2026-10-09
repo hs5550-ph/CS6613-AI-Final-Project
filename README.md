@@ -45,12 +45,13 @@ O = "O"
 - `is_terminal(state)` returns `True` when the state has a win or no legal
   actions remaining.
 - `display_board(state)` prints the state's board.
+- `utility_function(state, player's turn)` return the score for utility. 
 
 ## Utility function for alpha-beta pruning
 
 Alpha-beta pruning needs a utility function that scores states from the current
 player's perspective. Provide a function that accepts a `GameState` and the
-current player's piece, then pass it to `TicTacToe`:
+current player, then pass it to `TicTacToe`:
 
 ```python
 def utility(state, current_player):
