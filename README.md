@@ -45,7 +45,7 @@ O = "O"
 - `is_terminal(state)` returns `True` when the state has a win or no legal
   actions remaining.
 - `display_board(state)` prints the state's board.
-- `utility_function(state, player's turn)` return the score for utility. 
+- `utility_function(state, player)` return the score of utility for a particular player. 
 
 ## Utility function for alpha-beta pruning
 
