@@ -1,19 +1,25 @@
 # Generic Tic-Tac-Toe AI
 
-A Python implementation of a configurable two-dimensional Tic-Tac-Toe game for
-experimentation with AI algorithms.
+A configurable two-dimensional Tic-Tac-Toe game for experimentation with AI
+algorithms.
 
-## Playing a game
+## Creating a game and state
 
-Create a `TicTacToe` instance for each game. 
+`TicTacToe` contains the general game rules. `GameState` contains the board and represents one particular game. 
+
 ```python
 from Tic_Tak_Toe.tic_tac_toe import *
 
-game = Tic_Tak_Toe.TicTacToe()
-```
-## Module constants
+game = TicTacToe()
+state = game.initial_state()
 
-These constants are defined at module scope and can be imported directly:
+game.insert_piece(state, 0, 0, X)
+game.insert_piece(state, 1, 1, O)
+print(game.actions(state))
+game.display_board(state)
+```
+
+## Module constants
 
 ```python
 NUMBER_OF_ROWS = 3
@@ -22,17 +28,18 @@ CONNECTING_PIECES_TO_WIN = 3
 EMPTY = " "
 X = "X"
 O = "O"
-CELL_SEPARATOR = " | "
-ROW_SEPARATOR = "+"
 ```
 
-## `TicTacToe` methods
+## Game operations
 
-- `generate_random_move()` returns a random `(row, column)` position that is
-  empty on this game's board. It raises `ValueError` if the board is full.
-- `insert_piece(row, column, piece)` places `X` or `O` at the zero-based
-  position on this game's board. It raises `IndexError` for an out-of-range
-  position and `ValueError` for an invalid piece or an occupied position.
-- `is_win()` returns `True` if either piece has the required number of
-  connected pieces horizontally, vertically, or diagonally on this board.
-- `display_board()` prints this game's board.
+- `actions(state)` returns all avilable positions left in the format of `(row, column)`.
+- `generate_random_move(state)` returns a random available action. It raises
+  `ValueError` if there are no available moves.
+- `insert_piece(state, row, column, piece)` places `X` or `O` at a zero-based
+  position in the state. It raises `IndexError` for an out-of-range position
+  and `ValueError` for an invalid piece or an occupied position.
+- `is_win(state)` returns `True` if either piece has the required number of
+  connected pieces horizontally, vertically, or diagonally.
+- `is_terminal(state)` returns `True` when the state has a win or no legal
+  actions remaining.
+- `display_board(state)` prints the state's board.

@@ -1,7 +1,7 @@
 import pytest
 
 from Tic_Tak_Toe import tic_tac_toe
-from Tic_Tak_Toe.tic_tac_toe import TicTacToe
+from Tic_Tak_Toe.tic_tac_toe import GameState, TicTacToe
 
 
 @pytest.fixture
@@ -9,122 +9,165 @@ def game():
     return TicTacToe()
 
 
-def test_insert_piece_places_x_and_o(game):
-    game.insert_piece(0, 1, tic_tac_toe.X)
-    game.insert_piece(2, 2, tic_tac_toe.O)
-
-    assert game.board[0][1] == tic_tac_toe.X
-    assert game.board[2][2] == tic_tac_toe.O
+@pytest.fixture
+def state(game):
+    return game.initial_state()
 
 
-def test_game_objects_have_independent_boards():
-    first_game = TicTacToe()
-    second_game = TicTacToe()
-    first_game.insert_piece(0, 0, tic_tac_toe.X)
+def test_insert_piece_places_x_and_o(game, state):
+    game.insert_piece(state, 0, 1, tic_tac_toe.X)
+    game.insert_piece(state, 2, 2, tic_tac_toe.O)
 
-    assert first_game.board[0][0] == tic_tac_toe.X
-    assert second_game.board[0][0] == tic_tac_toe.EMPTY
-
-
-def test_generate_random_move_returns_an_empty_board_position(game):
-    game.insert_piece(0, 0, tic_tac_toe.X)
-
-    row, column = game.generate_random_move()
-
-    assert 0 <= row < game.rows
-    assert 0 <= column < game.columns
-    assert game.board[row][column] == tic_tac_toe.EMPTY
+    assert state.board[0][1] == tic_tac_toe.X
+    assert state.board[2][2] == tic_tac_toe.O
 
 
-def test_generate_random_move_rejects_full_board(game):
-    for row in range(game.rows):
-        for column in range(game.columns):
-            game.board[row][column] = tic_tac_toe.X
+def test_game_states_have_independent_boards(game):
+    first_state = game.initial_state()
+    second_state = game.initial_state()
+    game.insert_piece(first_state, 0, 0, tic_tac_toe.X)
+
+    assert first_state.board[0][0] == tic_tac_toe.X
+    assert second_state.board[0][0] == tic_tac_toe.EMPTY
+
+
+def test_actions_returns_all_empty_board_positions(game, state):
+    game.insert_piece(state, 0, 0, tic_tac_toe.X)
+
+    actions = game.actions(state)
+
+    assert len(actions) == 8
+    assert (0, 0) not in actions
+    assert all(state.board[row][column] == tic_tac_toe.EMPTY for row, column in actions)
+
+
+def test_generate_random_move_returns_an_available_action(game, state):
+    game.insert_piece(state, 0, 0, tic_tac_toe.X)
+
+    move = game.generate_random_move(state)
+
+    assert move in game.actions(state)
+
+
+def test_generate_random_move_rejects_full_board(game, state):
+    for row in range(state.rows):
+        for column in range(state.columns):
+            state.board[row][column] = tic_tac_toe.X
 
     with pytest.raises(ValueError, match="No available moves"):
-        game.generate_random_move()
+        game.generate_random_move(state)
 
 
-def test_insert_piece_rejects_out_of_range_position(game):
+def test_insert_piece_rejects_out_of_range_position(game, state):
     with pytest.raises(IndexError):
-        game.insert_piece(game.rows, 0, tic_tac_toe.X)
+        game.insert_piece(state, state.rows, 0, tic_tac_toe.X)
 
 
-def test_insert_piece_rejects_invalid_piece(game):
+def test_insert_piece_rejects_invalid_piece(game, state):
     with pytest.raises(ValueError):
-        game.insert_piece(0, 0, "?")
+        game.insert_piece(state, 0, 0, "?")
 
 
-def test_insert_piece_rejects_occupied_position(game):
-    game.insert_piece(1, 1, tic_tac_toe.X)
+def test_insert_piece_rejects_occupied_position(game, state):
+    game.insert_piece(state, 1, 1, tic_tac_toe.X)
 
     with pytest.raises(ValueError):
-        game.insert_piece(1, 1, tic_tac_toe.O)
+        game.insert_piece(state, 1, 1, tic_tac_toe.O)
 
 
-def test_is_win_detects_horizontal_win(game):
+def test_is_win_detects_horizontal_win(game, state):
     for column in range(game.connecting_pieces_to_win):
-        game.insert_piece(1, column, tic_tac_toe.X)
+        game.insert_piece(state, 1, column, tic_tac_toe.X)
 
-    assert game.is_win()
+    assert game.is_win(state)
 
 
-def test_is_win_detects_vertical_win(game):
+def test_is_win_detects_vertical_win(game, state):
     for row in range(game.connecting_pieces_to_win):
-        game.insert_piece(row, 1, tic_tac_toe.O)
+        game.insert_piece(state, row, 1, tic_tac_toe.O)
 
-    assert game.is_win()
+    assert game.is_win(state)
 
 
-def test_is_win_detects_diagonal_win(game):
+def test_is_win_detects_diagonal_win(game, state):
     for index in range(game.connecting_pieces_to_win):
-        game.insert_piece(index, index, tic_tac_toe.X)
+        game.insert_piece(state, index, index, tic_tac_toe.X)
 
-    assert game.is_win()
+    assert game.is_win(state)
 
 
-def test_is_win_detects_anti_diagonal_win(game):
+def test_is_win_detects_anti_diagonal_win(game, state):
     for row in range(game.connecting_pieces_to_win):
-        column = game.columns - 1 - row
-        game.insert_piece(row, column, tic_tac_toe.O)
+        column = state.columns - 1 - row
+        game.insert_piece(state, row, column, tic_tac_toe.O)
 
-    assert game.is_win()
+    assert game.is_win(state)
 
 
-def test_is_win_returns_false_without_a_connected_run(game):
-    game.insert_piece(0, 0, tic_tac_toe.X)
-    game.insert_piece(0, 1, tic_tac_toe.X)
-    game.insert_piece(1, 0, tic_tac_toe.O)
+def test_is_win_returns_false_without_a_connected_run(game, state):
+    game.insert_piece(state, 0, 0, tic_tac_toe.X)
+    game.insert_piece(state, 0, 1, tic_tac_toe.X)
+    game.insert_piece(state, 1, 0, tic_tac_toe.O)
 
-    assert not game.is_win()
+    assert not game.is_win(state)
 
 
 def test_board_dimensions_and_win_length_are_configurable():
     game = TicTacToe(rows=5, columns=6, connecting_pieces_to_win=4)
+    state = game.initial_state()
 
-    assert len(game.board) == 5
-    assert all(len(row) == 6 for row in game.board)
+    assert len(state.board) == 5
+    assert all(len(row) == 6 for row in state.board)
 
     for column in range(game.connecting_pieces_to_win):
-        game.insert_piece(2, column, tic_tac_toe.X)
-    assert game.is_win()
+        game.insert_piece(state, 2, column, tic_tac_toe.X)
+    assert game.is_win(state)
 
-    game = TicTacToe(rows=5, columns=6, connecting_pieces_to_win=4)
+    state = game.initial_state()
     for row in range(game.connecting_pieces_to_win):
-        game.insert_piece(row, 3, tic_tac_toe.O)
-    assert game.is_win()
+        game.insert_piece(state, row, 3, tic_tac_toe.O)
+    assert game.is_win(state)
 
 
-def test_constructor_rejects_non_positive_board_dimensions():
+def test_state_constructor_rejects_non_positive_board_dimensions():
+    with pytest.raises(ValueError, match="must be positive"):
+        GameState(rows=0)
+
+
+def test_game_constructor_rejects_non_positive_dimensions():
     with pytest.raises(ValueError, match="must be positive"):
         TicTacToe(rows=0)
 
 
-def test_display_board_shows_grid_and_separators(game, capsys):
-    game.insert_piece(0, 0, tic_tac_toe.X)
-    game.insert_piece(1, 1, tic_tac_toe.O)
+def test_is_terminal_returns_true_for_a_win(game, state):
+    for column in range(game.connecting_pieces_to_win):
+        game.insert_piece(state, 1, column, tic_tac_toe.X)
 
-    game.display_board()
+    assert game.is_terminal(state)
+
+
+def test_is_terminal_returns_true_for_a_full_board_without_a_win(game, state):
+    state.board[:] = [
+        [tic_tac_toe.X, tic_tac_toe.O, tic_tac_toe.X],
+        [tic_tac_toe.X, tic_tac_toe.O, tic_tac_toe.O],
+        [tic_tac_toe.O, tic_tac_toe.X, tic_tac_toe.X],
+    ]
+
+    assert not game.is_win(state)
+    assert game.is_terminal(state)
+
+
+def test_is_terminal_returns_false_while_moves_remain(game, state):
+    game.insert_piece(state, 0, 0, tic_tac_toe.X)
+
+    assert not game.is_terminal(state)
+
+
+def test_display_board_shows_grid_and_separators(game, state, capsys):
+    game.insert_piece(state, 0, 0, tic_tac_toe.X)
+    game.insert_piece(state, 1, 1, tic_tac_toe.O)
+
+    game.display_board(state)
 
     assert capsys.readouterr().out == (
         "X |   |  \n"
