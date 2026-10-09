@@ -7,9 +7,9 @@ experimentation with AI algorithms.
 
 Create a `TicTacToe` instance for each game. 
 ```python
-from Tic_Tak_Toe.tic_tac_toe import TicTacToe, X, O
+from Tic_Tak_Toe.tic_tac_toe import *
 
-game = TicTacToe()
+game = Tic_Tak_Toe.TicTacToe()
 ```
 ## Module constants
 
