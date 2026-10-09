@@ -40,8 +40,8 @@ O = "O"
 - `insert_piece(state, row, column, piece)` places `X` or `O` at a zero-based
   position in the state. It raises `IndexError` for an out-of-range position
   and `ValueError` for an invalid piece or an occupied position.
-- `is_win(state)` returns `True` if either piece has the required number of
-  connected pieces horizontally, vertically, or diagonally.
+- `is_win(state, player)` returns `True` if the specified player has the
+  required number of connected pieces horizontally, vertically, or diagonally.
 - `is_terminal(state)` returns `True` when the state has a win or no legal
   actions remaining.
 - `display_board(state)` prints the state's board.

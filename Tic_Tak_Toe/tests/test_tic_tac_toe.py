@@ -84,21 +84,22 @@ def test_is_win_detects_horizontal_win(game, state):
     for column in range(game.connecting_pieces_to_win):
         game.insert_piece(state, 1, column, tic_tac_toe.X)
 
-    assert game.is_win(state)
+    assert game.is_win(state, tic_tac_toe.X)
+    assert not game.is_win(state, tic_tac_toe.O)
 
 
 def test_is_win_detects_vertical_win(game, state):
     for row in range(game.connecting_pieces_to_win):
         game.insert_piece(state, row, 1, tic_tac_toe.O)
 
-    assert game.is_win(state)
+    assert game.is_win(state, tic_tac_toe.O)
 
 
 def test_is_win_detects_diagonal_win(game, state):
     for index in range(game.connecting_pieces_to_win):
         game.insert_piece(state, index, index, tic_tac_toe.X)
 
-    assert game.is_win(state)
+    assert game.is_win(state, tic_tac_toe.X)
 
 
 def test_is_win_detects_anti_diagonal_win(game, state):
@@ -106,7 +107,17 @@ def test_is_win_detects_anti_diagonal_win(game, state):
         column = state.columns - 1 - row
         game.insert_piece(state, row, column, tic_tac_toe.O)
 
-    assert game.is_win(state)
+    assert game.is_win(state, tic_tac_toe.O)
+
+
+def test_is_win_checks_two_different_players(game):
+    state = GameState(rows=5, columns=5)
+    for column in range(game.connecting_pieces_to_win):
+        game.insert_piece(state, 0, column, tic_tac_toe.X)
+        game.insert_piece(state, 4, column, tic_tac_toe.O)
+
+    assert game.is_win(state, tic_tac_toe.X)
+    assert game.is_win(state, tic_tac_toe.O)
 
 
 def test_utility_scores_wins_from_the_requested_player_perspective(game, state):
@@ -160,7 +171,13 @@ def test_is_win_returns_false_without_a_connected_run(game, state):
     game.insert_piece(state, 0, 1, tic_tac_toe.X)
     game.insert_piece(state, 1, 0, tic_tac_toe.O)
 
-    assert not game.is_win(state)
+    assert not game.is_win(state, tic_tac_toe.X)
+    assert not game.is_win(state, tic_tac_toe.O)
+
+
+def test_is_win_rejects_an_invalid_player(game, state):
+    with pytest.raises(ValueError, match="Player must be X or O"):
+        game.is_win(state, "?")
 
 
 def test_board_dimensions_and_win_length_are_configurable():
@@ -172,12 +189,12 @@ def test_board_dimensions_and_win_length_are_configurable():
 
     for column in range(game.connecting_pieces_to_win):
         game.insert_piece(state, 2, column, tic_tac_toe.X)
-    assert game.is_win(state)
+    assert game.is_win(state, tic_tac_toe.X)
 
     state = GameState(rows=5, columns=6)
     for row in range(game.connecting_pieces_to_win):
         game.insert_piece(state, row, 3, tic_tac_toe.O)
-    assert game.is_win(state)
+    assert game.is_win(state, tic_tac_toe.O)
 
 
 def test_state_constructor_rejects_non_positive_board_dimensions():
@@ -204,7 +221,8 @@ def test_is_terminal_returns_true_for_a_full_board_without_a_win(game, state):
         [tic_tac_toe.O, tic_tac_toe.X, tic_tac_toe.X],
     ]
 
-    assert not game.is_win(state)
+    assert not game.is_win(state, tic_tac_toe.X)
+    assert not game.is_win(state, tic_tac_toe.O)
     assert game.is_terminal(state)
 
 

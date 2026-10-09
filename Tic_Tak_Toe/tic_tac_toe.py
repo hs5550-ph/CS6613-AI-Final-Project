@@ -99,8 +99,10 @@ class TicTacToe:
 
         return False
 
-    def is_win(self, state: GameState) -> bool:
-        return self._is_win_for_piece(state, X) or self._is_win_for_piece(state, O)
+    def is_win(self, state: GameState, player: str) -> bool:
+        if player not in (X, O):
+            raise ValueError("Player must be X or O")
+        return self._is_win_for_piece(state, player)
 
     def utility(self, state: GameState, current_player: str) -> float:
         if current_player not in (X, O):
@@ -112,7 +114,11 @@ class TicTacToe:
         
 
     def is_terminal(self, state: GameState) -> bool:
-        return self.is_win(state) or not self.actions(state)
+        return (
+            self.is_win(state, X)
+            or self.is_win(state, O)
+            or not self.actions(state)
+        )
 
     def display_board(self, state: GameState) -> None:
         for row_index, row in enumerate(state.board):
