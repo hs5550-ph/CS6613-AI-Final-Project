@@ -49,12 +49,13 @@ O = "O"
 
 ## Utility function for alpha-beta pruning
 
-Alpha-beta pruning needs a utility function that scores states from the current
-player's perspective. Provide a function that accepts a `GameState` and the
+Alpha-beta pruning needs a utility function that scores a state from the current
+player's perspective. Provide a custom utility that accepts a `GameState` and the
 current player, then pass it to `TicTacToe`:
 
 ```python
 def utility(state, current_player):
+    //Example utility function. Note that you need to implement your own utility function. 
     x_count = sum(row.count(X) for row in state.board)
     o_count = sum(row.count(O) for row in state.board)
     if current_player == X:
@@ -62,6 +63,6 @@ def utility(state, current_player):
     return o_count - x_count
 
 
-game = TicTacToe(utility_function=utility)
+game = TicTacToe(utility_function=utility) 
 utility = game.utility_fuction(state, tic_tac_toe.X)
 ```
