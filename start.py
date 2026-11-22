@@ -7,6 +7,8 @@ NUMBER_OF_GAMES = 10
 
 
 def main() -> None:
+    # TEST 1
+    # Alpha-beta pruning vs Alpha-beta pruning
     max_depth = 6
     x_strategy: GameStrategy = partial(alpha_beta_search, max_depth=max_depth)
     o_strategy: GameStrategy = partial(alpha_beta_search, max_depth=max_depth)
