@@ -4,8 +4,7 @@ A two-dimensional Tic-Tac-Toe game with different AI algorithms.
 
 ## Running a stimulation
 
-The root-level `start.py` configures the strategies and calls
-`run_stimulation()`. Run it with:
+The root-level `start.py` runs the stimulation. Provide the implemented strategies and run it with:
 
 ```bash
 python3 start.py
