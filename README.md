@@ -66,3 +66,15 @@ def utility(state, current_player):
 game = TicTacToe(utility_function=utility) 
 utility = game.utility_fuction(state, tic_tac_toe.X)
 ```
+
+## Alpha-beta pruning
+
+`Alpha_Beta_Pruning.alpha_beta_pruning.alpha_beta_search` searches the game
+tree and returns the best `(row, column)` move for the player to move. Its depth limit is controlled by the
+module-level `SEARCH_DEPTH` value, measured in plies. 
+
+```python
+from Alpha_Beta_Pruning.alpha_beta_pruning import alpha_beta_search
+
+move = alpha_beta_search(game, state, tic_tac_toe.X)
+```
