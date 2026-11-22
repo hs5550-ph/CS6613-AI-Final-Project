@@ -2,9 +2,8 @@ from __future__ import annotations
 
 from copy import deepcopy
 
-from Tic_Tak_Toe.tic_tac_toe import ALLOWED_PLAYERS, GameState, TicTacToe
+from Tic_Tak_Toe.tic_tac_toe import ALLOWED_PLAYERS, GameState, Move, TicTacToe
 
-Move = tuple[int, int]
 SEARCH_DEPTH = 6
 
 

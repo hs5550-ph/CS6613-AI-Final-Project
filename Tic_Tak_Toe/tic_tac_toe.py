@@ -8,6 +8,7 @@ EMPTY = " "
 X = "X"
 O = "O"
 ALLOWED_PLAYERS = (X, O)
+Move = tuple[int, int]
 CELL_SEPARATOR = " | "
 ROW_SEPARATOR = "+"
 
@@ -38,7 +39,7 @@ class TicTacToe:
         self.connecting_pieces_to_win = connecting_pieces_to_win
         self.utility_function = utility_function
 
-    def actions(self, state: GameState) -> list[tuple[int, int]]:
+    def actions(self, state: GameState) -> list[Move]:
         return [
             (row_index, column_index)
             for row_index, row in enumerate(state.board)
@@ -46,7 +47,7 @@ class TicTacToe:
             if piece == EMPTY
         ]
 
-    def generate_random_move(self, state: GameState) -> tuple[int, int]:
+    def generate_random_move(self, state: GameState) -> Move:
         available_moves = self.actions(state)
         if not available_moves:
             raise ValueError("No available moves")
@@ -127,7 +128,8 @@ class TicTacToe:
             if row_index < state.rows - 1:
                 print(ROW_SEPARATOR.join("---" for _ in range(state.columns)))
 
-
+""" 
 if __name__ == "__main__":
     game = TicTacToe()
     game.display_board(GameState())
+"""

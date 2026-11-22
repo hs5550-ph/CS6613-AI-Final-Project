@@ -80,3 +80,34 @@ from Alpha_Beta_Pruning.alpha_beta_pruning import alpha_beta_search
 
 move = alpha_beta_search(game, state, tic_tac_toe.X)
 ```
+
+## Running the stimulation
+
+Run the 10-game alpha-beta comparison with:
+
+```bash
+python3 start.py
+```
+
+In `main()`, call the `simulate_game()` function from the stimulation.py.
+
+The X and O's strategy are the algorithm we choose to run them. Currently, only alpha-beta vs alpha-beta is impeplemented, using a utility that scores a win as `1`, a loss as `-1`, and other states as `0`.
+
+
+```python
+simulate_game(
+    game_number,
+    number_of_games,
+    starting_player,
+    x_strategy,
+    o_strategy,
+    utility,
+)
+```
+
+It returns a `GameResult` containing the winner and the move/state history and
+does not print. The runner reports each move and board, each player's win rate,
+the algorithms used, and wall-clock and CPU time. 
+
+The reporint function
+`print_game_report` will print the report of one particular game. The `print_summary` will summmarize all the games. Both functions are defined in `summary.py`.
