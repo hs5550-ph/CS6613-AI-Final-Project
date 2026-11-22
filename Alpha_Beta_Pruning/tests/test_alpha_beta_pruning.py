@@ -41,6 +41,19 @@ def test_alpha_beta_search_finds_winning_move_on_supplied_board():
     ]
 
     assert alpha_beta_search(game, state, X) == (1, 1)
+    assert alpha_beta_search(game, state, O) == (1, 1)
+    
+def test_alpha_beta_search_finds_winning_move_on_supplied_board_2():
+    game = make_game()
+    state = GameState()
+    state.board[:] = [
+        [O, X, " "],
+        [O, " ", O],
+        [X, " ", X],
+    ]
+
+    assert alpha_beta_search(game, state, X) == (1, 1)
+    assert alpha_beta_search(game, state, O) == (1, 1)
 
 
 def test_alpha_beta_search_blocks_an_immediate_loss():
