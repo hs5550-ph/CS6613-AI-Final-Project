@@ -70,8 +70,8 @@ utility = game.utility_fuction(state, tic_tac_toe.X)
 ## Alpha-beta pruning
 
 `Alpha_Beta_Pruning.alpha_beta_pruning.alpha_beta_search` searches the game
-tree and returns the best `(row, column)` move for the player to move. Its depth limit is controlled by the
-`SEARCH_DEPTH` value.
+tree and returns the best `(row, column)` move for the player to move. Its
+optional `max_depth` parameter sets the search limit in plies and defaults to 6.
 
 - `alpha_beta_search(game, state, tic_tac_toe.X)` run alpha beta pruning. 
 
@@ -79,6 +79,7 @@ tree and returns the best `(row, column)` move for the player to move. Its depth
 from Alpha_Beta_Pruning.alpha_beta_pruning import alpha_beta_search
 
 move = alpha_beta_search(game, state, tic_tac_toe.X)
+move = alpha_beta_search(game, state, tic_tac_toe.X, max_depth=4)
 ```
 
 ## Running the stimulation
@@ -89,25 +90,22 @@ Run the 10-game alpha-beta comparison with:
 python3 start.py
 ```
 
-In `main()`, call the `simulate_game()` function from the stimulation.py.
-
-The X and O's strategy are the algorithm we choose to run them. Currently, only alpha-beta vs alpha-beta is impeplemented, using a utility that scores a win as `1`, a loss as `-1`, and other states as `0`.
-
+`start.py` configures X and O strategies and calls `run_stimulation()`. Set
+`max_depth` there to configure the alpha-beta search depth. The runner's
+interface is:
 
 ```python
-simulate_game(
-    game_number,
-    number_of_games,
-    starting_player,
+run_stimulation(
     x_strategy,
     o_strategy,
-    utility,
+    number_of_games,
+    print_game=True,
+    print_summary=True,
 )
 ```
 
-It returns a `GameResult` containing the winner and the move/state history and
-does not print. The runner reports each move and board, each player's win rate,
-the algorithms used, and wall-clock and CPU time. 
-
-The reporint function
-`print_game_report` will print the report of one particular game. The `print_summary` will summmarize all the games. Both functions are defined in `summary.py`.
+`print_game` and `print_summary` independently control per-game reports and the
+final summary. If both are `False`, the function produces no output.
+`starting_player` and `utility` are optional keyword arguments.
+`simulate_game()` remains a silent, single-game interface that returns a
+`GameResult` with the winner and move/state history.

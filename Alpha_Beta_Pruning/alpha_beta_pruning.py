@@ -4,19 +4,20 @@ from copy import deepcopy
 
 from Tic_Tak_Toe.tic_tac_toe import ALLOWED_PLAYERS, GameState, Move, TicTacToe
 
-SEARCH_DEPTH = 6
+DEFAULT_MAX_DEPTH = 6
 
 
 def alpha_beta_search(
     game: TicTacToe,
     state: GameState,
     current_player: str,
+    max_depth: int = DEFAULT_MAX_DEPTH,
 ) -> Move | None:
     """Return the best move for the player to move, or None for a terminal state."""
     if current_player not in ALLOWED_PLAYERS:
         raise ValueError("Player must be X or O")
-    if SEARCH_DEPTH < 1:
-        raise ValueError("SEARCH_DEPTH must be positive")
+    if max_depth < 1:
+        raise ValueError("max_depth must be positive")
 
     _, move = _max_value(
         game,
@@ -25,6 +26,7 @@ def alpha_beta_search(
         float("-inf"),
         float("inf"),
         0,
+        max_depth,
     )
     return move
 
@@ -48,8 +50,9 @@ def _max_value(
     alpha: float,
     beta: float,
     depth: int,
+    max_depth: int,
 ) -> tuple[float, Move | None]:
-    if game.is_terminal(state) or depth >= SEARCH_DEPTH:
+    if game.is_terminal(state) or depth >= max_depth:
         return game.utility(state, max_player), None
 
     value = float("-inf")
@@ -63,6 +66,7 @@ def _max_value(
             alpha,
             beta,
             depth + 1,
+            max_depth,
         )
         if child_value > value:
             value, best_move = child_value, move
@@ -80,8 +84,9 @@ def _min_value(
     alpha: float,
     beta: float,
     depth: int,
+    max_depth: int,
 ) -> tuple[float, Move | None]:
-    if game.is_terminal(state) or depth >= SEARCH_DEPTH:
+    if game.is_terminal(state) or depth >= max_depth:
         return game.utility(state, max_player), None
 
     min_player = next(player for player in ALLOWED_PLAYERS if player != max_player)
@@ -96,6 +101,7 @@ def _min_value(
             alpha,
             beta,
             depth + 1,
+            max_depth,
         )
         if child_value < value:
             value, best_move = child_value, move

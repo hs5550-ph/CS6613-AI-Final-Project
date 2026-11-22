@@ -1,5 +1,6 @@
+import pytest
+
 from Tic_Tak_Toe.tic_tac_toe import O, X, GameState, TicTacToe
-from Alpha_Beta_Pruning import alpha_beta_pruning
 from Alpha_Beta_Pruning.alpha_beta_pruning import alpha_beta_search, result
 
 
@@ -89,7 +90,7 @@ def test_result_returns_the_state_after_the_move_without_mutating_input():
     assert state.board[1][2] == " "
 
 
-def test_search_depth_bounds_the_search(monkeypatch):
+def test_search_depth_bounds_the_search():
     game = make_game()
     state = GameState()
     evaluated_states = []
@@ -100,8 +101,14 @@ def test_search_depth_bounds_the_search(monkeypatch):
         return original_utility(current_state, player)
 
     game.utility_function = tracking_utility
-    monkeypatch.setattr(alpha_beta_pruning, "SEARCH_DEPTH", 1)
-
-    assert alpha_beta_search(game, state, X) == (0, 0)
+    assert alpha_beta_search(game, state, X, max_depth=1) == (0, 0)
     assert len(evaluated_states) == 9
     assert all(not game.is_terminal(evaluated_state) for evaluated_state in evaluated_states)
+
+
+def test_alpha_beta_search_rejects_non_positive_max_depth():
+    game = make_game()
+    state = GameState()
+
+    with pytest.raises(ValueError, match="max_depth must be positive"):
+        alpha_beta_search(game, state, X, max_depth=0)

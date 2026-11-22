@@ -1,9 +1,22 @@
-from stimulation import GameResult, GameStrategy
+from __future__ import annotations
+
+from functools import partial
+from typing import TYPE_CHECKING
+
 from Tic_Tak_Toe.tic_tac_toe import O, X, TicTacToe
+
+if TYPE_CHECKING:
+    from stimulation import GameResult, GameStrategy
 
 
 def _algorithm_name(strategy: GameStrategy) -> str:
-    return getattr(strategy, "__name__", type(strategy).__name__)
+    function = strategy.func if isinstance(strategy, partial) else strategy
+    name = getattr(function, "__name__", type(function).__name__)
+    keywords = strategy.keywords if isinstance(strategy, partial) else None
+    max_depth = keywords.get("max_depth") if keywords else None
+    if max_depth is not None:
+        return f"{name}(max_depth={max_depth})"
+    return name
 
 
 def print_game_report(
@@ -12,8 +25,6 @@ def print_game_report(
     starting_player: str,
     game_result: GameResult,
     display_game: TicTacToe,
-    wall_clock_time: float,
-    cpu_time: float,
 ) -> None:
     print(
         f"\nGame {game_number}/{number_of_games} "
@@ -30,8 +41,12 @@ def print_game_report(
     else:
         print(f"Result: {game_result.winner} wins")
     print(
-        f"Time: {wall_clock_time:.4f}s wall-clock, "
-        f"{cpu_time:.4f}s CPU"
+        f"X strategy time: {game_result.x_wall_clock_time:.4f}s wall-clock, "
+        f"{game_result.x_cpu_time:.4f}s CPU"
+    )
+    print(
+        f"O strategy time: {game_result.o_wall_clock_time:.4f}s wall-clock, "
+        f"{game_result.o_cpu_time:.4f}s CPU"
     )
 
 
@@ -40,8 +55,10 @@ def print_summary(
     number_of_games: int,
     x_strategy: GameStrategy,
     o_strategy: GameStrategy,
-    total_wall_clock_time: float,
-    total_cpu_time: float,
+    total_x_wall_clock_time: float,
+    total_o_wall_clock_time: float,
+    total_x_cpu_time: float,
+    total_o_cpu_time: float,
 ) -> None:
     x_win_rate = results[X] / number_of_games * 100
     o_win_rate = results[O] / number_of_games * 100
@@ -57,11 +74,20 @@ def print_summary(
     print(f"Overall win rate: {overall_win_rate:.1f}%")
     print(f"Draws: {results['draw']} ({draw_rate:.1f}%)")
     print(
-        f"Total time: {total_wall_clock_time:.4f}s wall-clock, "
-        f"{total_cpu_time:.4f}s CPU"
+        f"X strategy total: {total_x_wall_clock_time:.4f}s wall-clock, "
+        f"{total_x_cpu_time:.4f}s CPU"
     )
     print(
-        f"Average per game: "
-        f"{total_wall_clock_time / number_of_games:.4f}s wall-clock, "
-        f"{total_cpu_time / number_of_games:.4f}s CPU"
+        f"O strategy total: {total_o_wall_clock_time:.4f}s wall-clock, "
+        f"{total_o_cpu_time:.4f}s CPU"
+    )
+    print(
+        f"X strategy average per game: "
+        f"{total_x_wall_clock_time / number_of_games:.4f}s wall-clock, "
+        f"{total_x_cpu_time / number_of_games:.4f}s CPU"
+    )
+    print(
+        f"O strategy average per game: "
+        f"{total_o_wall_clock_time / number_of_games:.4f}s wall-clock, "
+        f"{total_o_cpu_time / number_of_games:.4f}s CPU"
     )
