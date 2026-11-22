@@ -4,7 +4,7 @@ from time import perf_counter, process_time
 
 from Tic_Tak_Toe.tic_tac_toe import O, X, GameState, Move, TicTacToe
 from Alpha_Beta_Pruning.alpha_beta_pruning import result
-from summary import print_game_report, print_summary as print_summary_report
+from .summary import print_game_report, print_summary as print_summary_report
 
 GameStrategy = Callable[[TicTacToe, GameState, str], Move | None]
 UtilityFunction = Callable[[GameState, str], float]

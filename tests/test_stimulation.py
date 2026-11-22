@@ -1,8 +1,8 @@
 from contextlib import redirect_stdout
 from io import StringIO
 
-import stimulation
-from stimulation import run_stimulation, utility_function
+import Stimulation.stimulation as stimulation
+from Stimulation.stimulation import run_stimulation, utility_function
 
 
 def first_available_move(game, state, _player):

@@ -87,12 +87,12 @@ move = alpha_beta_search(game, state, tic_tac_toe.X, max_depth=4)
 Run the 10-game alpha-beta comparison with:
 
 ```bash
-python3 start.py
+python3 -m Stimulation.start
 ```
 
-`start.py` configures X and O strategies and calls `run_stimulation()`. Set
-`max_depth` there to configure the alpha-beta search depth. The runner's
-interface is:
+`Stimulation/start.py` configures X and O strategies and calls
+`run_stimulation()`. Set `max_depth` there to configure the alpha-beta search
+depth. The runner's interface is:
 
 ```python
 run_stimulation(
@@ -107,5 +107,6 @@ run_stimulation(
 `print_game` and `print_summary` independently control per-game reports and the
 final summary. If both are `False`, the function produces no output.
 `starting_player` and `utility` are optional keyword arguments.
+The reusable simulation implementation is in `Stimulation/stimulation.py`.
 `simulate_game()` remains a silent, single-game interface that returns a
 `GameResult` with the winner and move/state history.

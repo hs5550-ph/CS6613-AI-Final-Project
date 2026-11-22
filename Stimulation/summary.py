@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 from Tic_Tak_Toe.tic_tac_toe import O, X, TicTacToe
 
 if TYPE_CHECKING:
-    from stimulation import GameResult, GameStrategy
+    from .stimulation import GameResult, GameStrategy
 
 
 def _algorithm_name(strategy: GameStrategy) -> str:
