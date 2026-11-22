@@ -1,8 +1,18 @@
 from collections.abc import Callable
 from dataclasses import dataclass
+from functools import partial
 from time import perf_counter, process_time
 
-from Tic_Tak_Toe.tic_tac_toe import O, X, GameState, Move, TicTacToe
+from Tic_Tak_Toe.tic_tac_toe import (
+    CONNECTING_PIECES_TO_WIN,
+    NUMBER_OF_COLUMNS,
+    NUMBER_OF_ROWS,
+    O,
+    X,
+    GameState,
+    Move,
+    TicTacToe,
+)
 from Alpha_Beta_Pruning.alpha_beta_pruning import result
 from .summary import print_game_report, print_summary as print_summary_report
 
@@ -29,17 +39,31 @@ class GameResult:
     o_cpu_time: float
 
 
-def utility_function(state: GameState, player: str) -> float:
+def utility_function(
+    state: GameState,
+    player: str,
+    *,
+    game: TicTacToe | None = None,
+) -> float:
     opponent = O if player == X else X
-    if _UTILITY_EVALUATOR.is_win(state, player):
+    evaluator = game if game is not None else _UTILITY_EVALUATOR
+    if evaluator.is_win(state, player):
         return 1.0
-    if _UTILITY_EVALUATOR.is_win(state, opponent):
+    if evaluator.is_win(state, opponent):
         return -1.0
     return 0.0
 
 
-def make_game(utility_function: UtilityFunction) -> TicTacToe:
-    return TicTacToe(utility_function=utility_function)
+def make_game(
+    utility: UtilityFunction | None = None,
+    connecting_pieces_to_win: int = CONNECTING_PIECES_TO_WIN,
+) -> TicTacToe:
+    game = TicTacToe(connecting_pieces_to_win=connecting_pieces_to_win)
+    if utility is None:
+        game.utility_function = partial(utility_function, game=game)
+    else:
+        game.utility_function = utility
+    return game
 
 
 def simulate_game(
@@ -48,7 +72,10 @@ def simulate_game(
     starting_player: str,
     x_strategy: GameStrategy,
     o_strategy: GameStrategy,
-    utility: UtilityFunction,
+    utility: UtilityFunction | None = None,
+    number_of_rows: int = NUMBER_OF_ROWS,
+    number_of_columns: int = NUMBER_OF_COLUMNS,
+    connecting_pieces_to_win: int = CONNECTING_PIECES_TO_WIN,
 ) -> GameResult:
     if number_of_games < 1:
         raise ValueError("number_of_games must be positive")
@@ -57,8 +84,8 @@ def simulate_game(
     if starting_player not in (X, O):
         raise ValueError("starting_player must be X or O")
 
-    game = make_game(utility)
-    state = GameState()
+    game = make_game(utility, connecting_pieces_to_win)
+    state = GameState(rows=number_of_rows, columns=number_of_columns)
     current_player = starting_player
     moves: list[MoveRecord] = []
     x_wall_clock_time = 0.0
@@ -116,15 +143,18 @@ def run_stimulation(
     number_of_games: int,
     print_game: bool,
     print_summary: bool,
+    number_of_rows: int = NUMBER_OF_ROWS,
+    number_of_columns: int = NUMBER_OF_COLUMNS,
+    connecting_pieces_to_win: int = CONNECTING_PIECES_TO_WIN,
     starting_player: str = STARTING_PLAYER,
-    utility: UtilityFunction = utility_function,
+    utility: UtilityFunction | None = None,
 ) -> dict[str, int]:
     if number_of_games < 1:
         raise ValueError("number_of_games must be positive")
     if starting_player not in (X, O):
         raise ValueError("starting_player must be X or O")
 
-    display_game = make_game(utility)
+    display_game = make_game(utility, connecting_pieces_to_win)
     results = {X: 0, O: 0, "draw": 0}
     total_x_wall_clock_time = 0.0
     total_o_wall_clock_time = 0.0
@@ -139,6 +169,9 @@ def run_stimulation(
             x_strategy,
             o_strategy,
             utility,
+            number_of_rows,
+            number_of_columns,
+            connecting_pieces_to_win,
         )
         total_x_wall_clock_time += game_result.x_wall_clock_time
         total_o_wall_clock_time += game_result.o_wall_clock_time

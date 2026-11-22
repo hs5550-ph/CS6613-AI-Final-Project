@@ -2,6 +2,39 @@
 
 A two-dimensional Tic-Tac-Toe game with different AI algorithms.
 
+## Running a stimulation
+
+The root-level `start.py` configures the strategies and calls
+`run_stimulation()`. Run it with:
+
+```bash
+python3 start.py
+```
+
+The interface is defined in `Stimulation/stimulation.py`:
+
+```python
+run_stimulation(
+    x_strategy,
+    o_strategy,
+    number_of_games,
+    print_game,
+    print_summary,
+    number_of_rows=3,
+    number_of_columns=3,
+    connecting_pieces_to_win=3,
+    starting_player=X,
+    utility=None,
+)
+```
+
+`x_strategy` and `o_strategy` are move-selection algorithm we choose, for example alpha_beta pruning. 
+`print_game` and `print_summary` independently control per-game output and the
+final summary. The default utility scores a win as `1`, a loss as `-1`, and
+other states as `0`, using the configured win length. Supply `utility` to use
+a custom utility function. The function returns counts for X wins, O wins,
+and draws.
+
 ## Creating a game and state
 
 `TicTacToe` contains the general game rules. `GameState` contains the board and represents one particular game. 
@@ -82,31 +115,6 @@ move = alpha_beta_search(game, state, tic_tac_toe.X)
 move = alpha_beta_search(game, state, tic_tac_toe.X, max_depth=4)
 ```
 
-## Running the stimulation
 
-Run the 10-game alpha-beta comparison with:
 
-```bash
-python3 -m Stimulation.start
-```
 
-`Stimulation/start.py` configures X and O strategies and calls
-`run_stimulation()`. Set `max_depth` there to configure the alpha-beta search
-depth. The runner's interface is:
-
-```python
-run_stimulation(
-    x_strategy,
-    o_strategy,
-    number_of_games,
-    print_game=True,
-    print_summary=True,
-)
-```
-
-`print_game` and `print_summary` independently control per-game reports and the
-final summary. If both are `False`, the function produces no output.
-`starting_player` and `utility` are optional keyword arguments.
-The reusable simulation implementation is in `Stimulation/stimulation.py`.
-`simulate_game()` remains a silent, single-game interface that returns a
-`GameResult` with the winner and move/state history.

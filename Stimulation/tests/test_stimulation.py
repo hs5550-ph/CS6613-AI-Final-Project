@@ -85,3 +85,49 @@ def test_run_stimulation_reports_x_and_o_strategy_times_separately(monkeypatch):
     assert "O strategy time: 3.0000s wall-clock, 3.0000s CPU" in report
     assert "X strategy total: 4.0000s wall-clock, 4.0000s CPU" in report
     assert "O strategy total: 3.0000s wall-clock, 3.0000s CPU" in report
+
+
+def test_run_stimulation_passes_configured_board_dimensions_to_strategies():
+    observed_dimensions = []
+
+    def tracking_strategy(game, state, _player):
+        observed_dimensions.append((state.rows, state.columns))
+        return game.actions(state)[0]
+
+    run_stimulation(
+        tracking_strategy,
+        tracking_strategy,
+        number_of_games=1,
+        print_game=False,
+        print_summary=False,
+        number_of_rows=4,
+        number_of_columns=5,
+        utility=utility_function,
+    )
+
+    assert observed_dimensions
+    assert set(observed_dimensions) == {(4, 5)}
+
+
+def test_run_stimulation_passes_configured_win_length_to_strategies():
+    observed_configurations = []
+
+    def tracking_strategy(game, state, _player):
+        observed_configurations.append(
+            (state.rows, state.columns, game.connecting_pieces_to_win)
+        )
+        return game.actions(state)[0]
+
+    run_stimulation(
+        tracking_strategy,
+        tracking_strategy,
+        number_of_games=1,
+        print_game=False,
+        print_summary=False,
+        number_of_rows=4,
+        number_of_columns=5,
+        connecting_pieces_to_win=2,
+    )
+
+    assert observed_configurations
+    assert set(observed_configurations) == {(4, 5, 2)}
