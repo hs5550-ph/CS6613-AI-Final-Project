@@ -117,3 +117,41 @@ move = alpha_beta_search(game, state, tic_tac_toe.X, max_depth=4)
 
 
 
+
+## Neural network
+
+`Neural_Network.neural_network.neural_network_move` picks a move with a trained
+neural network and **no tree search**. It has the same signature as
+`alpha_beta_search`, so it can be used as `x_strategy` or `o_strategy`.
+
+How it picks a move: for every legal move it builds the resulting board, the
+network scores each one from -1 (losing) to +1 (winning) for the player who
+moved, and the highest-scoring move is played.
+
+The network is a small multilayer perceptron written with NumPy
+(`Neural_Network/network.py`). It is trained by self-play with temporal
+difference learning (`Neural_Network/train.py`): each position is trained
+toward minus the opponent's best reply score, and finished games give exact
+targets (+1 win, 0 draw). Training data is multiplied by the board's
+rotations and reflections.
+
+Requires Python 3.10+ and NumPy (`pip install numpy`).
+
+```python
+from Neural_Network.neural_network import neural_network_move
+
+run_stimulation(neural_network_move, alpha_beta_search, NUMBER_OF_GAMES, True, True)
+```
+
+Each board size and win length needs its own trained model, stored as
+`Neural_Network/models/nn_<rows>x<columns>_win<win>.npz`. Models are included
+for 3x3 (3 in a row), 4x4 (3 and 4 in a row) and 5x5 (4 in a row). To train
+another one, run from the project root:
+
+```bash
+python -m Neural_Network.train --rows 6 --columns 6 --win 4 --games 50000
+python -m Neural_Network.train --preset all   # retrain every included model
+```
+
+Training time is not counted in the simulation's timing, only the time to
+choose moves.
